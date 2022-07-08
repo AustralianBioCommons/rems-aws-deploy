@@ -1,0 +1,55 @@
+{:dev false
+ :port 80
+
+ ;; the following settings are going to need to change on every realistic deployment
+ ;; so we want them configured at a CDK level
+ ;; to do this we bind environment variables in our Fargate
+ ;; I have left the values here commented out for reference
+
+ ;; :database-url "postgresql://rems_db/rems?user=rems"
+ ;; :oidc-metadata-url "https://remsdev.eu.auth0.com/.well-known/openid-configuration"
+ ;; :oidc-client-id "aa"
+ ;; :oidc-client-secret "bb"
+ ;; :public-url "https://myhost.domain.com/"
+ ;; in order for our environment variables to work for AUTH SES SMTP - we need the actual SMTP section to exist
+ ;; so we create it here in the config, but know the individual values will be changed in our CDK stack
+ :smtp {:host "WILL_BE_OVERRIDEN_BY_ENV" :pass "WILL_BE_OVERRIDEN_BY_ENV" :port 587 :user "WILL_BE_OVERRIDEN_BY_ENV"}
+
+
+ ;; all the settings below are only controlled from this config
+
+ :search-index-path "search-index"
+ :theme-path "theme.edn"
+ :authentication :oidc
+ :log-authentication-details true
+ ;; Open ID Connect settings
+ ;; some attributes that google oauth returns:
+ :oidc-extra-attributes [{:attribute "nickname" :name {:en "Nickname"}}
+                         {:attribute "picture"}]
+
+ :languages [:en]
+ :render-css-file? true
+ ;;:extra-pages [{:id "about"
+ ;;               :translations {:fi {:title "Info"
+ ;;                                   :filename "about-fi.md"}
+ ;;                              :en {:title "About"
+ ;;                                   :filename "about-en.md"}
+ ;;                              :sv {:title "Info"
+ ;;                                   :filename "about-sv.md"}}}]
+ ;;:extra-pages-path "./test-data/extra-pages"
+ :application-deadline-days 4
+ :application-id-column :generated-and-assigned-external-id
+ :enable-assign-external-id-ui true
+ :attachment-max-size 10000000 ;; 10MB
+ :application-expiration nil
+ :enable-pdf-api true
+ :enable-permissions-api true
+ ;; example keys from https://tools.ietf.org/html/rfc7517#appendix-A
+ ;;:ga4gh-visa-private-key "test-data/example-private-key.jwk"
+ ;;:ga4gh-visa-public-key "test-data/example-public-key.jwk"
+ :catalogue-is-public false
+ :accessibility-report true
+ :enable-ega true
+ :enable-doi true
+ :enable-duo true
+ :enable-catalogue-tree true}

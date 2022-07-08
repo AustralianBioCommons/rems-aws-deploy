@@ -1,0 +1,16 @@
+{
+  "name": "rems-aws-deploy",
+  "version": "1.0.0",
+  "devDependencies": {
+    "@types/node": "16.11.43",
+    "aws-cdk": "2.31.0",
+    "prettier": "2.7.1",
+    "ts-node": "10.8.2",
+    "typescript": "4.7.4"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.31.0",
+    "constructs": "10.1.43",
+    "source-map-support": "0.5.21"
+  }
+}
