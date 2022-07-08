@@ -4,8 +4,8 @@ A CDK stack for deploying REMS into an AWS
 environment.
 
 The CDK stack sets up a standalone VPC with REMS Docker images
-running in Fargate in a private subnet. Public access is then provided
-via an SSL application load balancer.
+running in Fargate in a private subnet. Public HTTP is then provided
+via an SSL enabled application load balancer.
 
 The CDK stack can be deployed, destroyed etc using a thin wrapper around
 the CDK binary - `rems-cdk.sh`.
@@ -34,10 +34,10 @@ construct them as part of the CDK. Instead we record their values in
 a couple of configuration spots.
 
 For this installation walk through - we will pretend that we are doing
-an installation for BioCommons that we want to end up hosted as
+an installation for BioCommons that we want to end up hosted at
 
 ```
-https://rems.demo.biocommons.dev
+https://rems.biocommons.dev
 ```
 
 We will also imagine that we are going to use an Okta installation
@@ -45,19 +45,43 @@ that will contain our list of users.
 
 ### CloudMap Namespace
 
-Create a CloudMap namespace (API mode) and enter the namespace name
-into the file
+Create a CloudMap namespace (API mode). The namespace is a place in AWS
+where we can share common runtime settings. It binds various separate
+services together by allowing them to locate each other.
+
+Enter the namespace name into the file
 
 `rems-cloudmap-namespace.txt`
 
-This namespace is the glue that binds various separate services together
-and allows them to locate each other.
-
 ### A Domain Name in Route 53
+
+Create a Route 53 zone (public) for the base domain name - in
+our case `biocommons.dev`. This will be where DNS entries for our
+services will be created and how SSL certificates will be configured.
+
+There will need to be some (not AWS) way in which you
+have registered your base domain and point it to this new Route 53 zone -
+unfortunately that is very dependent on your choice of registrar.
+
+For Google Domains I registered the domain and set the custom nameservers
+to point to AWS.
 
 ### An SSL Certificate
 
+Request an SSL certificate to be managed by AWS. This certificate will
+help secure all traffic to the server (the browser padlock). AWS managed certificates
+are free as long as they are attached to an AWS service. They will automatically
+renew so you do not need to worry about them.
+
+
+
+
 ### An SES
+
+Created a Verified identity in the Simple Email Service. This service will be
+used by REMS to send out notification emails.
+
+
 
 ## AWS Architecture
 
