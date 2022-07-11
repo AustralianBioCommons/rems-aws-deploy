@@ -6,4 +6,4 @@ node_modules
 .cdk.staging
 cdk.out
 cdk.context.json
-/.DS_Store
+.DS_Store
