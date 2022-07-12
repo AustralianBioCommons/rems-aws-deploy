@@ -32,61 +32,53 @@ A detailed walk through including screenshots is shown below.
 
 [Detailed AWS Setup instructions](docs/AWS-SETUP.md)
 
-
-## Configuring the deployment
+## Deployment
 
 At the end of the process of "Getting Started", we will either have created
 new infrastructure in our AWS account - or chosen existing infrastructure
 to re-use.
 
-We now need to record the values of this infrastructure into a configuration
-file so that the REMS CDK scripts can do the deployment.
+A detailed walk through of where the configuration settings need to be
+changed and how the actual deployment is done is shown below.
 
-The first file we need to edit is `rems-cloudmap-namespace.txt`. This holds
-the CloudMap namespace details - and is used by our scripts to share AWS
-settings.
+[Detailed AWS Deploy instructions](docs/AWS-DEPLOY.md)
 
-After that, the only other file to edit is `rems-cdk.sh`. There are instructions
-within that shell script file you should read.
+## Maintaining
 
-In our example - most of the setting are set by filling in an environment
-variable.
+The nature of CDK means that updates to the software stack are handled intelligently.
+If you change any settings (say changing the amount of memory for the Fargate instance)
+you can just do the `./rems-cdk.sh deploy` again and AWS will work out the steps
+necessary to deploy the new software - whilst keeping the existing service
+running.
 
-```bash
-HOSTED_ZONE_NAME="biocommons.dev"
-```
+Other maintenance that needs to be done in REMS (such as migrating to new database
+versions or changing user permissions) should be done
+with `rems-cmd.sh`. For details of the CMDs that work with REMS (see
+https://github.com/CSCfi/rems/blob/master/src/clj/rems/standalone.clj - the 'help' output)
 
-**Some** of our parameters are considered 'secret' and therefore are not appropriate
-for checking into a GitHub repository. For these parameters, we have filled in
-values using AWS Parameter Store
+### A new REMS version
 
-```
-  ...
-   --context "oidcClientSecret=$(aws ssm get-parameter --name 'oauth_client_secret' --output text --query 'Parameter.Value')" \
-  ...
-```
+When a new REMS version is published at the REMS github release page
+(https://github.com/CSCfi/rems/releases) - you can
+upgrade your instance
 
-You can modify the `rems-cdk.sh` script to use any technique appropriate for your
-environment. As long as the settings are passed into the CDK invocation as 'context' - you should
-be good to go.
+1. Check the release notes for any breaking changes
 
-## Deploying
+2. Edit `iac/rems-docker-image/Dockerfile` and change the line
 
-The CDK stack can now be used by invoking a thin wrapper around
-the CDK binary - `rems-cdk.sh`.
+    `ADD https://github.com/CSCfi/rems/releases/download/v2.27/rems.jar /rems/rems.jar`
 
-Open a shell with the correct AWS credentials for your account (or modify each of the
-following commands to use `--profile yourprofile`)
-
-```bash
-rems-cdk.sh deploy
-```
+   to match the new version
+ 
+3. Execute `./rems-cdk.sh deploy` again
+ 
+4. Execute `./rems-cmd.sh "migrate"` to pick up any new database migrations (if needed)
 
 
+### A REMS config change
 
-A lambda is also created for easy execution of REMS control commands
-such as "migrate" etc - and this lambda can be launched from the
-accompanying `rems-cmd.sh`.
+1. Edit `iac/rems-docker-image/config.edn` and make any changes you want
+2. Execute `./rems-cdk.sh deploy` again
 
 
 ## AWS Architecture
@@ -118,17 +110,4 @@ passing in these settings, its usage is identical to regular `cdk`.
 
 - `./rems-cdk deploy` deploy this stack to your default AWS account/region
 - `./rems-cdk diff` compare deployed stack with current state
-
-### REMS
-
-For details of the CMDs that work with REMS - see
-
-https://github.com/CSCfi/rems/blob/master/src/clj/rems/standalone.clj
-
-(the 'help' output)
-
-Some examples are
-
-- `./rems-cmd "migrate"`
-- `./rems-cmd "list-users"`
-- `./rems-cmd "grant-role owner abcdefg;list-users"`
+- `./rems-cdk destroy` uninstall the entire stack from AWS

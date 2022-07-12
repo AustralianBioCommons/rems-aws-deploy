@@ -18,7 +18,7 @@ CLOUD_MAP_ID=$(head -2 rems-cloudmap-namespace.txt | tail -1)
 HOSTED_PREFIX="rems"
 HOSTED_ZONE_NAME="biocommons.dev"
 HOSTED_ZONE_CERT="arn:aws:acm:ap-southeast-2:497070645708:certificate/f01d2230-149f-4062-967e-86cf74df6a61"
-OIDC_METADATA_URL="https://accounts.google.com/.well-known/openid-configuration"
+OIDC_METADATA_URL="https://rems-hgpp-trial.au.auth0.com/.well-known/openid-configuration"
 SMTP_HOST="email-smtp.ap-southeast-2.amazonaws.com"
 SMTP_MAIL_FROM="rems@biocommons.dev"
 
