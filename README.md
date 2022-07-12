@@ -2,7 +2,9 @@
 
 A [CDK](https://docs.aws.amazon.com/cdk/v2/guide/home.html) stack
 for deploying [REMS](https://github.com/CSCfi/rems) into an AWS
-environment.
+environment. This deployment is suitable for a production grade
+deployment (it is securely isolated in AWS and uses managed Postgres
+and load balancing). It can be "in-place" upgraded and configured.
 
 REMS (Resource Entitlement Management System) is a tool for
 managing access rights to resources, such as research datasets.
